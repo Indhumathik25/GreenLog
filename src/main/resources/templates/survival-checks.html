@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>GreenLog - Survival Checks</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f8f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2e7d32;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            margin: 5px;
+            width: 210px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background-color: #2e7d32;
+        }
+
+        button:hover {
+            background-color: #1b5e20;
+        }
+
+        .edit-btn {
+            background-color: #1976d2;
+        }
+
+        .edit-btn:hover {
+            background-color: #0d47a1;
+        }
+
+        .delete-btn {
+            background-color: #d32f2f;
+        }
+
+        .delete-btn:hover {
+            background-color: #b71c1c;
+        }
+
+        .cancel-btn {
+            background-color: #757575;
+        }
+
+        .cancel-btn:hover {
+            background-color: #424242;
+        }
+
+        .rate-btn {
+            background-color: #00897b;
+        }
+
+        .rate-btn:hover {
+            background-color: #00695c;
+        }
+
+        .back-btn {
+            background-color: #455a64;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+
+        #editBox {
+            display: none;
+        }
+
+        .info {
+            background-color: #e8f5e9;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .result {
+            background-color: #e8f5e9;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>GreenLog - Survival Checks</h1>
+
+    <p>Track Tree Survival</p>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <!-- ADD SURVIVAL CHECK -->
+
+    <div class="box">
+
+        <h2>Add Survival Check</h2>
+
+
+        <div class="info">
+
+            Enter your own Survival Check ID,
+            Plantation ID and Volunteer ID.
+
+        </div>
+
+
+        <input
+                type="number"
+                id="id"
+                placeholder="Survival Check ID"
+        >
+
+
+        <input
+                type="date"
+                id="checkDate"
+        >
+
+
+        <select id="status">
+
+            <option value="">
+                Select Status
+            </option>
+
+            <option value="ALIVE">
+                ALIVE
+            </option>
+
+            <option value="NOT_ALIVE">
+                NOT_ALIVE
+            </option>
+
+        </select>
+
+
+        <input
+                type="number"
+                id="plantationId"
+                placeholder="Plantation ID"
+        >
+
+
+        <input
+                type="number"
+                id="volunteerId"
+                placeholder="Volunteer ID"
+        >
+
+
+        <br>
+
+
+        <button onclick="addCheck()">
+            Add Survival Check
+        </button>
+
+    </div>
+
+
+
+    <!-- EDIT SURVIVAL CHECK -->
+
+    <div class="box" id="editBox">
+
+        <h2>Edit Survival Check</h2>
+
+
+        <input
+                type="number"
+                id="editId"
+                placeholder="Survival Check ID"
+                readonly
+        >
+
+
+        <input
+                type="date"
+                id="editCheckDate"
+        >
+
+
+        <select id="editStatus">
+
+            <option value="">
+                Select Status
+            </option>
+
+            <option value="ALIVE">
+                ALIVE
+            </option>
+
+            <option value="NOT_ALIVE">
+                NOT_ALIVE
+            </option>
+
+        </select>
+
+
+        <input
+                type="number"
+                id="editPlantationId"
+                placeholder="Plantation ID"
+        >
+
+
+        <input
+                type="number"
+                id="editVolunteerId"
+                placeholder="Volunteer ID"
+        >
+
+
+        <br>
+
+
+        <button onclick="updateCheck()">
+            Update Survival Check
+        </button>
+
+
+        <button
+                class="cancel-btn"
+                onclick="cancelEdit()"
+        >
+            Cancel
+        </button>
+
+    </div>
+
+
+
+    <!-- SURVIVAL CHECK LIST -->
+
+    <div class="box">
+
+        <h2>Survival Check List</h2>
+
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Check Date</th>
+
+                <th>Status</th>
+
+                <th>Plantation ID</th>
+
+                <th>Volunteer ID</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody id="checkTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- SURVIVAL RATE BY DRIVE -->
+
+    <div class="box">
+
+        <h2>Survival Rate by Drive</h2>
+
+
+        <input
+                type="number"
+                id="rateDriveId"
+                placeholder="Drive ID"
+        >
+
+
+        <button
+                class="rate-btn"
+                onclick="getDriveRate()"
+        >
+            Calculate Rate
+        </button>
+
+
+        <div
+                class="result"
+                id="driveRateResult"
+        >
+            Survival rate will appear here.
+        </div>
+
+    </div>
+
+
+
+    <!-- SURVIVAL RATE BY SPECIES -->
+
+    <div class="box">
+
+        <h2>Survival Rate by Species</h2>
+
+
+        <input
+                type="text"
+                id="rateSpecies"
+                placeholder="Tree Species"
+        >
+
+
+        <button
+                class="rate-btn"
+                onclick="getSpeciesRate()"
+        >
+            Calculate Rate
+        </button>
+
+
+        <div
+                class="result"
+                id="speciesRateResult"
+        >
+            Survival rate will appear here.
+        </div>
+
+    </div>
+
+
+
+    <!-- BACK -->
+
+    <div class="box">
+
+        <button
+                class="back-btn"
+                onclick="window.location.href='/dashboard'"
+        >
+            Back to Dashboard
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+    /* =========================
+       ADD SURVIVAL CHECK
+       ========================= */
+
+    function addCheck() {
+
+
+        let id =
+            document.getElementById("id").value;
+
+
+        let checkDate =
+            document.getElementById("checkDate").value;
+
+
+        let status =
+            document.getElementById("status").value;
+
+
+        let plantationId =
+            document.getElementById(
+                "plantationId"
+            ).value;
+
+
+        let volunteerId =
+            document.getElementById(
+                "volunteerId"
+            ).value;
+
+
+        if (
+            id === "" ||
+            checkDate === "" ||
+            status === "" ||
+            plantationId === "" ||
+            volunteerId === ""
+        ) {
+
+            alert("Please fill all fields.");
+
+            return;
+
+        }
+
+
+        let check = {
+
+            id: parseInt(id),
+
+            checkDate: checkDate,
+
+            status: status,
+
+            plantation: {
+
+                id: parseInt(plantationId)
+
+            },
+
+            volunteer: {
+
+                id: parseInt(volunteerId)
+
+            }
+
+        };
+
+
+        fetch('/SurvivalCheck', {
+
+            method: 'POST',
+
+            headers: {
+
+                'Content-Type':
+                    'application/json'
+
+            },
+
+            body:
+                JSON.stringify(check)
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to add survival check"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+
+            document.getElementById("id").value = "";
+
+            document.getElementById("checkDate").value = "";
+
+            document.getElementById("status").value = "";
+
+            document.getElementById("plantationId").value = "";
+
+            document.getElementById("volunteerId").value = "";
+
+
+            loadChecks();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error adding survival check. " +
+                "Check that the Plantation ID and Volunteer ID exist."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       LOAD CHECKS
+       ========================= */
+
+    function loadChecks() {
+
+
+        fetch('/SurvivalCheck')
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load survival checks"
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(checks => {
+
+
+            let table =
+                document.getElementById(
+                    "checkTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            checks.forEach(check => {
+
+
+                let plantationId = "";
+
+                let volunteerId = "";
+
+
+                if (check.plantation) {
+
+                    plantationId =
+                        check.plantation.id;
+
+                }
+
+
+                if (check.volunteer) {
+
+                    volunteerId =
+                        check.volunteer.id;
+
+                }
+
+
+                let row =
+                    document.createElement("tr");
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${check.id}
+                    </td>
+
+                    <td>
+                        ${check.checkDate}
+                    </td>
+
+                    <td>
+                        ${check.status}
+                    </td>
+
+                    <td>
+                        ${plantationId}
+                    </td>
+
+                    <td>
+                        ${volunteerId}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="edit-btn"
+                            onclick="editCheck(${check.id})"
+                        >
+                            Edit
+                        </button>
+
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteCheck(${check.id})"
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            });
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error loading survival checks."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       EDIT CHECK
+       ========================= */
+
+    function editCheck(id) {
+
+
+        fetch('/SurvivalCheck/' + id)
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Survival check not found"
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(check => {
+
+
+            document.getElementById(
+                "editId"
+            ).value = check.id;
+
+
+            document.getElementById(
+                "editCheckDate"
+            ).value = check.checkDate;
+
+
+            document.getElementById(
+                "editStatus"
+            ).value = check.status;
+
+
+            if (check.plantation) {
+
+                document.getElementById(
+                    "editPlantationId"
+                ).value =
+                    check.plantation.id;
+
+            } else {
+
+                document.getElementById(
+                    "editPlantationId"
+                ).value = "";
+
+            }
+
+
+            if (check.volunteer) {
+
+                document.getElementById(
+                    "editVolunteerId"
+                ).value =
+                    check.volunteer.id;
+
+            } else {
+
+                document.getElementById(
+                    "editVolunteerId"
+                ).value = "";
+
+            }
+
+
+            document.getElementById(
+                "editBox"
+            ).style.display = "block";
+
+
+            window.scrollTo({
+
+                top: 0,
+
+                behavior: "smooth"
+
+            });
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error loading survival check."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       UPDATE CHECK
+       ========================= */
+
+    function updateCheck() {
+
+
+        let id =
+            document.getElementById(
+                "editId"
+            ).value;
+
+
+        let checkDate =
+            document.getElementById(
+                "editCheckDate"
+            ).value;
+
+
+        let status =
+            document.getElementById(
+                "editStatus"
+            ).value;
+
+
+        let plantationId =
+            document.getElementById(
+                "editPlantationId"
+            ).value;
+
+
+        let volunteerId =
+            document.getElementById(
+                "editVolunteerId"
+            ).value;
+
+
+        if (
+            id === "" ||
+            checkDate === "" ||
+            status === "" ||
+            plantationId === "" ||
+            volunteerId === ""
+        ) {
+
+            alert("Please fill all fields.");
+
+            return;
+
+        }
+
+
+        let check = {
+
+            id: parseInt(id),
+
+            checkDate: checkDate,
+
+            status: status,
+
+            plantation: {
+
+                id: parseInt(plantationId)
+
+            },
+
+            volunteer: {
+
+                id: parseInt(volunteerId)
+
+            }
+
+        };
+
+
+        fetch('/SurvivalCheck', {
+
+            method: 'PUT',
+
+            headers: {
+
+                'Content-Type':
+                    'application/json'
+
+            },
+
+            body:
+                JSON.stringify(check)
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to update survival check"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+            cancelEdit();
+
+            loadChecks();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error updating survival check."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       CANCEL EDIT
+       ========================= */
+
+    function cancelEdit() {
+
+
+        document.getElementById(
+            "editId"
+        ).value = "";
+
+
+        document.getElementById(
+            "editCheckDate"
+        ).value = "";
+
+
+        document.getElementById(
+            "editStatus"
+        ).value = "";
+
+
+        document.getElementById(
+            "editPlantationId"
+        ).value = "";
+
+
+        document.getElementById(
+            "editVolunteerId"
+        ).value = "";
+
+
+        document.getElementById(
+            "editBox"
+        ).style.display = "none";
+
+    }
+
+
+
+    /* =========================
+       DELETE CHECK
+       ========================= */
+
+    function deleteCheck(id) {
+
+
+        let confirmDelete =
+            confirm(
+                "Are you sure you want to delete Survival Check ID " +
+                id +
+                "?"
+            );
+
+
+        if (!confirmDelete) {
+
+            return;
+
+        }
+
+
+        fetch('/SurvivalCheck/' + id, {
+
+            method: 'DELETE'
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to delete survival check"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+            loadChecks();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error deleting survival check."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       SURVIVAL RATE BY DRIVE
+       ========================= */
+
+    function getDriveRate() {
+
+
+        let driveId =
+            document.getElementById(
+                "rateDriveId"
+            ).value;
+
+
+        if (driveId === "") {
+
+            alert("Please enter Drive ID.");
+
+            return;
+
+        }
+
+
+        fetch(
+            '/SurvivalCheck/SurvivalRate/Drive/' +
+            driveId
+        )
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to calculate survival rate"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(rate => {
+
+
+            document.getElementById(
+                "driveRateResult"
+            ).innerHTML =
+
+                "Survival Rate: " +
+                parseFloat(rate).toFixed(2) +
+                "%";
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error calculating survival rate."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       SURVIVAL RATE BY SPECIES
+       ========================= */
+
+    function getSpeciesRate() {
+
+
+        let species =
+            document.getElementById(
+                "rateSpecies"
+            ).value;
+
+
+        if (species === "") {
+
+            alert("Please enter Tree Species.");
+
+            return;
+
+        }
+
+
+        fetch(
+            '/SurvivalCheck/SurvivalRate/Species/' +
+            encodeURIComponent(species)
+        )
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to calculate survival rate"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(rate => {
+
+
+            document.getElementById(
+                "speciesRateResult"
+            ).innerHTML =
+
+                "Survival Rate: " +
+                parseFloat(rate).toFixed(2) +
+                "%";
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error calculating survival rate."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       PAGE LOAD
+       ========================= */
+
+    window.onload = function() {
+
+        loadChecks();
+
+    };
+
+
+</script>
+
+
+</body>
+
+</html>

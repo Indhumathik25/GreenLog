@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GreenLog Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f8f5;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            width: 230px;
+            background: #1b5e20;
+            color: white;
+            padding: 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h2 {
+            margin: 5px;
+        }
+
+        .logo p {
+            font-size: 13px;
+            color: #c8e6c9;
+        }
+
+        .menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 13px;
+            margin: 6px 0;
+            border-radius: 8px;
+        }
+
+        .menu a:hover {
+            background: #2e7d32;
+        }
+
+        .logout {
+            margin-top: 30px;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #c62828;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Main */
+
+        .main {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .top {
+            margin-bottom: 30px;
+        }
+
+        .top h1 {
+            margin-bottom: 5px;
+            color: #1b5e20;
+        }
+
+        .top p {
+            color: #666;
+        }
+
+        /* Cards */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-top: 15px;
+        }
+
+        /* Welcome section */
+
+        .welcome {
+            background: white;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .welcome h2 {
+            color: #1b5e20;
+        }
+
+        .welcome p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 900px) {
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sidebar {
+                width: 190px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                padding: 20px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- Sidebar -->
+
+    <div class="sidebar">
+
+        <div class="logo">
+            <h2>🌱 GreenLog</h2>
+            <p>Tree Plantation Tracker</p>
+        </div>
+
+        <div class="menu">
+
+            <a href="/dashboard">
+                🏠 Dashboard
+            </a>
+
+            <a href="/plantation">
+                🌱 Plantations
+            </a>
+
+            <a href="/volunteers">
+                👥 Volunteers
+            </a>
+
+            <a href="/drives">
+                🌳 Plantation Drives
+            </a>
+
+            <a href="/survival-checks">
+                📊 Survival Checks
+            </a>
+
+        </div>
+
+        <button class="logout" onclick="logout()">
+            Logout
+        </button>
+
+    </div>
+
+
+    <!-- Main Content -->
+
+    <div class="main">
+
+        <div class="top">
+
+            <h1>Dashboard</h1>
+
+            <p>
+                Welcome to GreenLog Tree Plantation Drive Tracker
+            </p>
+
+        </div>
+
+
+        <!-- Summary Cards -->
+
+        <div class="cards">
+
+            <div class="card">
+
+                <h3>🌱 Total Trees Planted</h3>
+
+                <div class="number" id="treeCount">
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>👥 Total Volunteers</h3>
+
+                <div class="number" id="volunteerCount">
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>🌳 Plantation Drives</h3>
+
+                <div class="number" id="driveCount">
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>📊 Survival Rate</h3>
+
+                <div class="number" id="survivalRate">
+                    0%
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Welcome -->
+
+        <div class="welcome">
+
+            <h2>About GreenLog</h2>
+
+            <p>
+                GreenLog is a Tree Plantation Drive Tracker
+                designed to manage plantation activities,
+                volunteers and tree survival checks.
+            </p>
+
+            <p>
+                Use the menu on the left to add plantations,
+                manage volunteers, create plantation drives
+                and record survival checks.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    async function loadDashboard() {
+
+        try {
+
+            const plantationsResponse =
+                await fetch('/Plantation');
+
+            const volunteersResponse =
+                await fetch('/Volunteer');
+
+            const drivesResponse =
+                await fetch('/PlantationDrive');
+
+            const checksResponse =
+                await fetch('/SurvivalCheck');
+
+
+            const plantations =
+                await plantationsResponse.json();
+
+            const volunteers =
+                await volunteersResponse.json();
+
+            const drives =
+                await drivesResponse.json();
+
+            const checks =
+                await checksResponse.json();
+
+
+            document.getElementById("treeCount").innerText =
+                plantations.length;
+
+            document.getElementById("volunteerCount").innerText =
+                volunteers.length;
+
+            document.getElementById("driveCount").innerText =
+                drives.length;
+
+
+            let alive = 0;
+
+            checks.forEach(function(check) {
+
+                if (
+                    check.status &&
+                    check.status.toUpperCase() === "ALIVE"
+                ) {
+
+                    alive++;
+
+                }
+
+            });
+
+
+            let rate = 0;
+
+            if (plantations.length > 0) {
+
+                rate =
+                    (alive / plantations.length) * 100;
+
+            }
+
+
+            document.getElementById("survivalRate").innerText =
+                rate.toFixed(1) + "%";
+
+
+        } catch (error) {
+
+            console.log("Dashboard error:", error);
+
+        }
+
+    }
+
+
+    function logout() {
+
+        window.location.href = "/login";
+
+    }
+
+
+    loadDashboard();
+
+</script>
+
+</body>
+</html>

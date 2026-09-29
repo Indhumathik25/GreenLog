@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>GreenLog - Plantation Drives</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f8f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2e7d32;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 220px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background-color: #2e7d32;
+        }
+
+        button:hover {
+            background-color: #1b5e20;
+        }
+
+        .edit-btn {
+            background-color: #1976d2;
+        }
+
+        .edit-btn:hover {
+            background-color: #0d47a1;
+        }
+
+        .delete-btn {
+            background-color: #d32f2f;
+        }
+
+        .delete-btn:hover {
+            background-color: #b71c1c;
+        }
+
+        .cancel-btn {
+            background-color: #757575;
+        }
+
+        .cancel-btn:hover {
+            background-color: #424242;
+        }
+
+        .back-btn {
+            background-color: #455a64;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+
+        #editBox {
+            display: none;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>GreenLog - Plantation Drives</h1>
+
+    <p>Manage Plantation Drives</p>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <!-- ADD DRIVE -->
+
+    <div class="box">
+
+        <h2>Add Plantation Drive</h2>
+
+
+        <input
+                type="number"
+                id="id"
+                placeholder="Drive ID"
+        >
+
+
+        <input
+                type="text"
+                id="name"
+                placeholder="Drive Name"
+        >
+
+
+        <input
+                type="date"
+                id="date"
+        >
+
+
+        <input
+                type="text"
+                id="location"
+                placeholder="Location"
+        >
+
+
+        <br>
+
+
+        <button onclick="addDrive()">
+            Add Drive
+        </button>
+
+    </div>
+
+
+
+    <!-- EDIT DRIVE -->
+
+    <div class="box" id="editBox">
+
+        <h2>Edit Plantation Drive</h2>
+
+
+        <input
+                type="number"
+                id="editId"
+                placeholder="Drive ID"
+                readonly
+        >
+
+
+        <input
+                type="text"
+                id="editName"
+                placeholder="Drive Name"
+        >
+
+
+        <input
+                type="date"
+                id="editDate"
+        >
+
+
+        <input
+                type="text"
+                id="editLocation"
+                placeholder="Location"
+        >
+
+
+        <br>
+
+
+        <button onclick="updateDrive()">
+            Update Drive
+        </button>
+
+
+        <button
+                class="cancel-btn"
+                onclick="cancelEdit()"
+        >
+            Cancel
+        </button>
+
+    </div>
+
+
+
+    <!-- DRIVE LIST -->
+
+    <div class="box">
+
+        <h2>Plantation Drive List</h2>
+
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Name</th>
+
+                <th>Date</th>
+
+                <th>Location</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody id="driveTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- BACK -->
+
+    <div class="box">
+
+        <button
+                class="back-btn"
+                onclick="window.location.href='/dashboard'"
+        >
+            Back to Dashboard
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+    /* =========================
+       ADD DRIVE
+       ========================= */
+
+    function addDrive() {
+
+
+        let id =
+            document.getElementById("id").value;
+
+
+        let name =
+            document.getElementById("name").value;
+
+
+        let date =
+            document.getElementById("date").value;
+
+
+        let location =
+            document.getElementById("location").value;
+
+
+        if (
+            id === "" ||
+            name === "" ||
+            date === "" ||
+            location === ""
+        ) {
+
+            alert("Please fill all fields.");
+
+            return;
+
+        }
+
+
+        let drive = {
+
+            id: parseInt(id),
+
+            name: name,
+
+            date: date,
+
+            location: location
+
+        };
+
+
+        fetch('/PlantationDrive', {
+
+            method: 'POST',
+
+            headers: {
+
+                'Content-Type':
+                    'application/json'
+
+            },
+
+            body:
+                JSON.stringify(drive)
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to add drive"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+
+            document.getElementById("id").value = "";
+
+            document.getElementById("name").value = "";
+
+            document.getElementById("date").value = "";
+
+            document.getElementById("location").value = "";
+
+
+            loadDrives();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Error adding plantation drive.");
+
+        });
+
+    }
+
+
+
+    /* =========================
+       LOAD DRIVES
+       ========================= */
+
+    function loadDrives() {
+
+
+        fetch('/PlantationDrive')
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load drives"
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(drives => {
+
+
+            let table =
+                document.getElementById(
+                    "driveTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            drives.forEach(drive => {
+
+
+                let row =
+                    document.createElement("tr");
+
+
+                row.innerHTML = `
+
+                    <td>${drive.id}</td>
+
+                    <td>${drive.name}</td>
+
+                    <td>${drive.date}</td>
+
+                    <td>${drive.location}</td>
+
+                    <td>
+
+                        <button
+                            class="edit-btn"
+                            onclick="editDrive(${drive.id})"
+                        >
+                            Edit
+                        </button>
+
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteDrive(${drive.id})"
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            });
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Error loading plantation drives.");
+
+        });
+
+    }
+
+
+
+    /* =========================
+       EDIT DRIVE
+       ========================= */
+
+    function editDrive(id) {
+
+
+        fetch('/PlantationDrive/' + id)
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Drive not found"
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(drive => {
+
+
+            document.getElementById(
+                "editId"
+            ).value = drive.id;
+
+
+            document.getElementById(
+                "editName"
+            ).value = drive.name;
+
+
+            document.getElementById(
+                "editDate"
+            ).value = drive.date;
+
+
+            document.getElementById(
+                "editLocation"
+            ).value = drive.location;
+
+
+            document.getElementById(
+                "editBox"
+            ).style.display = "block";
+
+
+            window.scrollTo({
+
+                top: 0,
+
+                behavior: "smooth"
+
+            });
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Error loading plantation drive.");
+
+        });
+
+    }
+
+
+
+    /* =========================
+       UPDATE DRIVE
+       ========================= */
+
+    function updateDrive() {
+
+
+        let id =
+            document.getElementById(
+                "editId"
+            ).value;
+
+
+        let name =
+            document.getElementById(
+                "editName"
+            ).value;
+
+
+        let date =
+            document.getElementById(
+                "editDate"
+            ).value;
+
+
+        let location =
+            document.getElementById(
+                "editLocation"
+            ).value;
+
+
+        if (
+            id === "" ||
+            name === "" ||
+            date === "" ||
+            location === ""
+        ) {
+
+            alert("Please fill all fields.");
+
+            return;
+
+        }
+
+
+        let drive = {
+
+            id: parseInt(id),
+
+            name: name,
+
+            date: date,
+
+            location: location
+
+        };
+
+
+        fetch('/PlantationDrive', {
+
+            method: 'PUT',
+
+            headers: {
+
+                'Content-Type':
+                    'application/json'
+
+            },
+
+            body:
+                JSON.stringify(drive)
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to update drive"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+            cancelEdit();
+
+            loadDrives();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Error updating plantation drive.");
+
+        });
+
+    }
+
+
+
+    /* =========================
+       CANCEL EDIT
+       ========================= */
+
+    function cancelEdit() {
+
+
+        document.getElementById(
+            "editId"
+        ).value = "";
+
+
+        document.getElementById(
+            "editName"
+        ).value = "";
+
+
+        document.getElementById(
+            "editDate"
+        ).value = "";
+
+
+        document.getElementById(
+            "editLocation"
+        ).value = "";
+
+
+        document.getElementById(
+            "editBox"
+        ).style.display = "none";
+
+    }
+
+
+
+    /* =========================
+       DELETE DRIVE
+       ========================= */
+
+    function deleteDrive(id) {
+
+
+        let confirmDelete =
+            confirm(
+                "Are you sure you want to delete Drive ID " +
+                id +
+                "?"
+            );
+
+
+        if (!confirmDelete) {
+
+            return;
+
+        }
+
+
+        fetch('/PlantationDrive/' + id, {
+
+            method: 'DELETE'
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to delete drive"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+            loadDrives();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error deleting plantation drive. " +
+                "This drive may be connected to plantations."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       PAGE LOAD
+       ========================= */
+
+    window.onload = function() {
+
+        loadDrives();
+
+    };
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>GreenLog - Volunteers</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f8f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2e7d32;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 220px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background-color: #2e7d32;
+        }
+
+        button:hover {
+            background-color: #1b5e20;
+        }
+
+        .delete-btn {
+            background-color: #d32f2f;
+        }
+
+        .delete-btn:hover {
+            background-color: #b71c1c;
+        }
+
+        .edit-btn {
+            background-color: #1976d2;
+        }
+
+        .edit-btn:hover {
+            background-color: #0d47a1;
+        }
+
+        .cancel-btn {
+            background-color: #757575;
+        }
+
+        .cancel-btn:hover {
+            background-color: #424242;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+
+        #editBox {
+            display: none;
+        }
+
+        .back-btn {
+            background-color: #455a64;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>GreenLog - Volunteers</h1>
+
+    <p>Manage Volunteers and Leaderboard</p>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <!-- ADD VOLUNTEER -->
+
+    <div class="box">
+
+        <h2>Add Volunteer</h2>
+
+
+        <input
+                type="number"
+                id="id"
+                placeholder="Volunteer ID"
+        >
+
+
+        <input
+                type="text"
+                id="name"
+                placeholder="Volunteer Name"
+        >
+
+
+        <input
+                type="email"
+                id="email"
+                placeholder="Email"
+        >
+
+
+        <br>
+
+
+        <button onclick="addVolunteer()">
+            Add Volunteer
+        </button>
+
+    </div>
+
+
+
+    <!-- EDIT VOLUNTEER -->
+
+    <div class="box" id="editBox">
+
+        <h2>Edit Volunteer</h2>
+
+
+        <input
+                type="number"
+                id="editId"
+                placeholder="Volunteer ID"
+                readonly
+        >
+
+
+        <input
+                type="text"
+                id="editName"
+                placeholder="Volunteer Name"
+        >
+
+
+        <input
+                type="email"
+                id="editEmail"
+                placeholder="Email"
+        >
+
+
+        <br>
+
+
+        <button onclick="updateVolunteer()">
+            Update Volunteer
+        </button>
+
+
+        <button
+                class="cancel-btn"
+                onclick="cancelEdit()"
+        >
+            Cancel
+        </button>
+
+    </div>
+
+
+
+    <!-- VOLUNTEER LIST -->
+
+    <div class="box">
+
+        <h2>Volunteer List</h2>
+
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>ID</th>
+
+                <th>Name</th>
+
+                <th>Email</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody id="volunteerTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- LEADERBOARD -->
+
+    <div class="box">
+
+        <h2>Volunteer Leaderboard</h2>
+
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>Rank</th>
+
+                <th>Volunteer Name</th>
+
+                <th>Trees Planted</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody id="leaderboardTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- BACK -->
+
+    <div class="box">
+
+        <button
+                class="back-btn"
+                onclick="window.location.href='/dashboard'"
+        >
+            Back to Dashboard
+        </button>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+    /* =========================
+       ADD VOLUNTEER
+       ========================= */
+
+    function addVolunteer() {
+
+
+        let id =
+            document.getElementById("id").value;
+
+
+        let name =
+            document.getElementById("name").value;
+
+
+        let email =
+            document.getElementById("email").value;
+
+
+        if (
+            id === "" ||
+            name === "" ||
+            email === ""
+        ) {
+
+            alert("Please fill all fields.");
+
+            return;
+        }
+
+
+        let volunteer = {
+
+            id: parseInt(id),
+
+            name: name,
+
+            email: email
+
+        };
+
+
+        fetch('/Volunteer', {
+
+            method: 'POST',
+
+            headers: {
+
+                'Content-Type':
+                    'application/json'
+
+            },
+
+            body:
+                JSON.stringify(volunteer)
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to add volunteer"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+
+            document.getElementById("id").value = "";
+
+            document.getElementById("name").value = "";
+
+            document.getElementById("email").value = "";
+
+
+            loadVolunteers();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Error adding volunteer.");
+
+        });
+
+    }
+
+
+
+    /* =========================
+       LOAD VOLUNTEERS
+       ========================= */
+
+    function loadVolunteers() {
+
+
+        fetch('/Volunteer')
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load volunteers"
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(volunteers => {
+
+
+            let table =
+                document.getElementById(
+                    "volunteerTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            volunteers.forEach(volunteer => {
+
+
+                let row =
+                    document.createElement("tr");
+
+
+                row.innerHTML = `
+
+                    <td>${volunteer.id}</td>
+
+                    <td>${volunteer.name}</td>
+
+                    <td>${volunteer.email}</td>
+
+                    <td>
+
+                        <button
+                            class="edit-btn"
+                            onclick="editVolunteer(${volunteer.id})"
+                        >
+                            Edit
+                        </button>
+
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteVolunteer(${volunteer.id})"
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            });
+
+
+            loadLeaderboard();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Error loading volunteers.");
+
+        });
+
+    }
+
+
+
+    /* =========================
+       EDIT VOLUNTEER
+       ========================= */
+
+    function editVolunteer(id) {
+
+
+        fetch('/Volunteer/' + id)
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Volunteer not found"
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(volunteer => {
+
+
+            document.getElementById(
+                "editId"
+            ).value = volunteer.id;
+
+
+            document.getElementById(
+                "editName"
+            ).value = volunteer.name;
+
+
+            document.getElementById(
+                "editEmail"
+            ).value = volunteer.email;
+
+
+            document.getElementById(
+                "editBox"
+            ).style.display = "block";
+
+
+            window.scrollTo({
+
+                top: 0,
+
+                behavior: "smooth"
+
+            });
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Error loading volunteer.");
+
+        });
+
+    }
+
+
+
+    /* =========================
+       UPDATE VOLUNTEER
+       ========================= */
+
+    function updateVolunteer() {
+
+
+        let id =
+            document.getElementById(
+                "editId"
+            ).value;
+
+
+        let name =
+            document.getElementById(
+                "editName"
+            ).value;
+
+
+        let email =
+            document.getElementById(
+                "editEmail"
+            ).value;
+
+
+        if (
+            id === "" ||
+            name === "" ||
+            email === ""
+        ) {
+
+            alert("Please fill all fields.");
+
+            return;
+
+        }
+
+
+        let volunteer = {
+
+            id: parseInt(id),
+
+            name: name,
+
+            email: email
+
+        };
+
+
+        fetch('/Volunteer', {
+
+            method: 'PUT',
+
+            headers: {
+
+                'Content-Type':
+                    'application/json'
+
+            },
+
+            body:
+                JSON.stringify(volunteer)
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to update volunteer"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+            cancelEdit();
+
+            loadVolunteers();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert("Error updating volunteer.");
+
+        });
+
+    }
+
+
+
+    /* =========================
+       CANCEL EDIT
+       ========================= */
+
+    function cancelEdit() {
+
+
+        document.getElementById(
+            "editId"
+        ).value = "";
+
+
+        document.getElementById(
+            "editName"
+        ).value = "";
+
+
+        document.getElementById(
+            "editEmail"
+        ).value = "";
+
+
+        document.getElementById(
+            "editBox"
+        ).style.display = "none";
+
+    }
+
+
+
+    /* =========================
+       DELETE VOLUNTEER
+       ========================= */
+
+    function deleteVolunteer(id) {
+
+
+        let confirmDelete =
+            confirm(
+                "Are you sure you want to delete Volunteer ID " +
+                id +
+                "?"
+            );
+
+
+        if (!confirmDelete) {
+
+            return;
+
+        }
+
+
+        fetch('/Volunteer/' + id, {
+
+            method: 'DELETE'
+
+        })
+
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to delete volunteer"
+                );
+
+            }
+
+            return response.text();
+
+        })
+
+
+        .then(message => {
+
+            alert(message);
+
+            loadVolunteers();
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error deleting volunteer. " +
+                "This volunteer may be connected to a plantation."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       LEADERBOARD
+       ========================= */
+
+    function loadLeaderboard() {
+
+
+        Promise.all([
+
+            fetch('/Volunteer')
+                .then(response => response.json()),
+
+            fetch('/Plantation')
+                .then(response => response.json())
+
+        ])
+
+
+        .then(([volunteers, plantations]) => {
+
+
+            let leaderboard = [];
+
+
+            volunteers.forEach(volunteer => {
+
+
+                let count = 0;
+
+
+                plantations.forEach(plantation => {
+
+
+                    if (
+                        plantation.volunteer &&
+                        plantation.volunteer.id === volunteer.id
+                    ) {
+
+                        count++;
+
+                    }
+
+                });
+
+
+                leaderboard.push({
+
+                    name: volunteer.name,
+
+                    count: count
+
+                });
+
+            });
+
+
+            leaderboard.sort(
+                (a, b) => b.count - a.count
+            );
+
+
+            let table =
+                document.getElementById(
+                    "leaderboardTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            leaderboard.forEach(
+                (volunteer, index) => {
+
+
+                    let row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            ${volunteer.name}
+                        </td>
+
+                        <td>
+                            ${volunteer.count}
+                        </td>
+
+                    `;
+
+
+                    table.appendChild(row);
+
+                }
+            );
+
+        })
+
+
+        .catch(error => {
+
+            console.log(error);
+
+            alert(
+                "Error loading leaderboard."
+            );
+
+        });
+
+    }
+
+
+
+    /* =========================
+       PAGE LOAD
+       ========================= */
+
+    window.onload = function() {
+
+        loadVolunteers();
+
+    };
+
+
+</script>
+
+
+</body>
+
+</html>
